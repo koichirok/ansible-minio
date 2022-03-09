@@ -1,0 +1,18 @@
+#!/sbin/openrc-run
+
+{{ ansible_managed | comment }}
+
+command={{ minio_server_bin }}
+command_args="server --address {{ minio_server_addr }} $minio_args $minio_volumes"
+command_background=true
+command_user="{{ minio_user }}:{{ minio_group }}"
+description="Distributed object storage server built for cloud applications and devops."
+#directory=/usr/local
+name="MinIO"
+pidfile="/run/${RC_SVCNAME}.pid"
+capabilities="cap_net_bind_service=+ep"
+
+depend() {
+    need net localmount
+    after firewall
+}

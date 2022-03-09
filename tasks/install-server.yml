@@ -66,6 +66,17 @@
     owner: "{{ minio_user }}"
     group: "{{ minio_group }}"
     mode: 0640
+  when: ansible_service_mgr != "openrc"
+  notify: restart minio
+
+- name: Generate the MinIO server service conf file
+  template:
+    src: minio.openrc-conf.j2
+    dest: "/etc/conf.d/minio"
+    owner: "{{ minio_user }}"
+    group: "{{ minio_group }}"
+    mode: 0640
+  when: ansible_service_mgr != "openrc"
   notify: restart minio
 
 - name: Create the MinIO server systemd config
@@ -82,7 +93,7 @@
 
 - name: Create the MinIO server init.d config
   template:
-    src: minio.init.j2
+    src: "{{ (ansible_service_mgr == 'openrc') | ternary('minio.openrc-init.j2', 'minio.init.j2') }}"
     dest: "/etc/init.d/minio"
     owner: "{{ minio_user }}"
     group: "{{ minio_group }}"

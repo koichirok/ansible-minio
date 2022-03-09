@@ -1,0 +1,20 @@
+{{ ansible_managed | comment }}
+
+# MinIO local/remote volumes.
+{% if minio_server_args | length > 0 %}
+minio_volumes="{{ minio_server_args | join(' ')}}"
+{% endif %}
+minio_args="{{ minio_server_opts }}"
+rc_ulimit=65536
+
+{% if minio_root_username %}
+# Root User of the server.
+MINIO_ROOT_USER="{{ minio_root_username }}"
+{% endif %}
+
+{% if minio_root_password %}
+# Root Password of the server.
+MINIO_ROOT_PASSWORD="{{ minio_root_password }}"
+{% endif %}
+
+{{ minio_server_env_extra }}
